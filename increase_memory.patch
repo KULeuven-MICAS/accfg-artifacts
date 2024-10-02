@@ -1,0 +1,13 @@
+diff --git a/target/snitch_cluster/cfg/snax-streamer-gemm.hjson b/target/snitch_cluster/cfg/snax-streamer-gemm.hjson
+index 53e358c..6b9ab0f 100644
+--- a/target/snitch_cluster/cfg/snax-streamer-gemm.hjson
++++ b/target/snitch_cluster/cfg/snax-streamer-gemm.hjson
+@@ -19,7 +19,7 @@
+         addr_width: 48,
+         data_width: 64,
+         tcdm: {
+-            size: 128,
++            size: 4096,
+             banks: 32,
+         },
+         cluster_periph_size: 64, // kB
