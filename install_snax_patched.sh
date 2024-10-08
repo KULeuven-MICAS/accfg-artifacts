@@ -1,7 +1,7 @@
 # Script that enters snax_cluster repository, and installs right version
 git clone https://github.com/KULeuven-MICAS/snax_cluster.git
 cd snax_cluster
-git checkout `cat ../commit`
+git checkout `cat ../commit-snax_cluster`
 git submodule update --init 
 git apply ../increase_memory.patch
 make CFG_OVERRIDE=cfg/snax-streamer-gemm.hjson -C target/snitch_cluster rtl-gen
