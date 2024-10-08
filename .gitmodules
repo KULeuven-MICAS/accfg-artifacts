@@ -1,0 +1,3 @@
+[submodule "snax_cluster"]
+	path = snax_cluster
+	url = https://github.com/KULeuven-MICAS/snax_cluster
