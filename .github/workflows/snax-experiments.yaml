@@ -13,6 +13,8 @@ jobs:
       image: ghcr.io/kuleuven-micas/accfg-experiments-snax:latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: true
       - name: Install snax-mlir
         working-directory: snax-mlir
         run: python3 -m pip install -r requirements.txt -e .
