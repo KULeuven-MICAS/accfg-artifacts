@@ -17,7 +17,7 @@ Therefore, we recommmend cloning as follows:
 git clone --recursive https://github.com/KULeuven-MICAS/accfg-artifacts
 ```
 
-If you already cloned the repository, but forgot the recursive flag, do:
+If you already cloned the repository, but forgot the `--recursive` flag, do:
 
 ```sh
 git submodule update --init --recursive --remote
