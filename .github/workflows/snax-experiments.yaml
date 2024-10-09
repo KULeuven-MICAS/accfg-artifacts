@@ -1,0 +1,21 @@
+name: Experiments SNAX
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  accfg-experiments-snax:
+    runs-on: ubuntu-latest
+    container: 
+      image: ghcr.io/kuleuven-micas/accfg-experiments-snax:latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install snax-mlir
+        working-directory: snax-mlir
+        run: python3 -m pip install -r requirements.txt -e .
+      - name: Run accfg benchmarks
+        working-directory: kernels/streamer_matmul
+        run: python3 genbenchmark.py
