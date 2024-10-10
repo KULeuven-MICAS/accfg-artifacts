@@ -31,7 +31,7 @@ def extract_count(trace_file, cmd):
 
 # Base folder path to start walking through the tree
 
-base_path = 'results_paper'
+base_path = 'results'
 data = []
 
 for folder in glob.iglob(os.path.join(base_path, "tiled_matmul_generated_*x*x*")):
@@ -59,10 +59,15 @@ df['option'] = pd.Categorical(df['option'], categories=category_order, ordered=T
 conf_bandwidth = 2
 peak_perf = 1024
 df['ops'] = (df['size']**3)*2
+df['cycles_peak'] = df['ops'] / peak_perf
+# Create column with cycles value for NO_ACCFG_OPT for each size
+no_accfg_opt_values = df[df['option'] == 'NO_ACCFG_OPT'][['size', 'cycles']]
+no_accfg_opt_values = no_accfg_opt_values.set_index('size').rename(columns={'cycles': 'no_opt_cycles'})
+df = df.merge(no_accfg_opt_values, on='size')
+df['speedup'] = df['no_opt_cycles'] / df['cycles'] 
+
 df['setup ins'] = df['csrw'] + df['csrwi']
 df['Ioc'] = df['ops']/((5/8)*df['csrwi'] + (4)*df['csrw'])
-df['cycles_peak'] = df['ops'] / peak_perf
-df['p_meas'] = df['ops'] / df['cycles']
 df['p_attain_seq'] = (1/((1/peak_perf) + (1/(df['Ioc']*conf_bandwidth))))
 df['p_attain_conc'] = (df['Ioc'] * conf_bandwidth).clip(upper=peak_perf)
 
@@ -76,5 +81,10 @@ def get_p_attain_opt(row):
 
 # Apply the function to create the new column
 df['p_attain_opt'] = df.apply(get_p_attain_opt, axis=1)
+
+df['p_meas'] = df['ops'] / df['cycles']
+
+
+
 
 print(df.sort_values(["size", "option"]))
