@@ -101,6 +101,8 @@ def main():
     # Parse the arguments
     args = parser.parse_args()
     dataframe = walk_folder(args.directory) 
+    if dataframe.empty:
+        raise RuntimeError("No results were found")
     print(dataframe.sort_values(["size", "option"]))
 
 if __name__ == "__main__":

@@ -25,4 +25,4 @@ jobs:
       - name: Install postprocessing requirements
         run: pip install -r requirements.txt
       - name: Run postprocessing
-        run: python3 get_all_numbers.py snax-mlir/kernels/streamer/matmul/results
+        run: python3 get_all_numbers.py snax-mlir/kernels/streamer_matmul/results
