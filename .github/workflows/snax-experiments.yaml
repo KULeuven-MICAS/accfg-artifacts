@@ -9,8 +9,9 @@ on:
 jobs:
   accfg-experiments-snax:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     container: 
-      image: ghcr.io/kuleuven-micas/accfg-experiments-snax:latest
+      image: ghcr.io/kuleuven-micas/snax:v0.1.6    
     steps:
       - uses: actions/checkout@v3
         with:
