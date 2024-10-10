@@ -43,11 +43,38 @@ for folder in glob.iglob(os.path.join(base_path, "tiled_matmul_generated_*x*x*")
             data.append({
                 'size': number,
                 'option': option,
-                'CSRW Count': extract_count(trace_file, CMD_CSRW),
-                'CSRWI Count': extract_count(trace_file, CMD_CSRWI),
-                'Cycles Count': extract_count(cycle_file, CMD_CYCLES)
+                'csrw': extract_count(trace_file, CMD_CSRW),
+                'csrwi': extract_count(trace_file, CMD_CSRWI),
+                'cycles': extract_count(cycle_file, CMD_CYCLES)
             })
-            
+
+
 df = pd.DataFrame(data)
-df['Total setup instructions'] = df['CSRW Count'] + df['CSRWI Count']
-print(df)
+
+# Define the custom sort order for 'category'
+# Convert 'option' column to a categorical type with the specified order
+category_order = ['NO_ACCFG_OPT', 'DEDUP_ONLY', 'OVERLAP_ONLY','ACCFG_BOTH']
+df['option'] = pd.Categorical(df['option'], categories=category_order, ordered=True)
+
+conf_bandwidth = 2
+peak_perf = 1024
+df['ops'] = (df['size']**3)*2
+df['setup ins'] = df['csrw'] + df['csrwi']
+df['Ioc'] = df['ops']/((5/8)*df['csrwi'] + (4)*df['csrw'])
+df['cycles_peak'] = df['ops'] / peak_perf
+df['p_meas'] = df['ops'] / df['cycles']
+df['p_attain_seq'] = (1/((1/peak_perf) + (1/(df['Ioc']*conf_bandwidth))))
+df['p_attain_conc'] = (df['Ioc'] * conf_bandwidth).clip(upper=peak_perf)
+
+def get_p_attain_opt(row):
+    # For these two options, the sequential attainable is the maximum attainable
+    if row['option'] in ['NO_ACCFG_OPT', 'DEDUP_ONLY']:
+        return row['p_attain_seq']
+    # In the other case, you are competing against the concurrent attainable
+    else:
+        return row['p_attain_conc']
+
+# Apply the function to create the new column
+df['p_attain_opt'] = df.apply(get_p_attain_opt, axis=1)
+
+print(df.sort_values(["size", "option"]))
