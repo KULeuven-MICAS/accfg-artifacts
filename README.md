@@ -27,19 +27,10 @@ git submodule update --init --recursive --remote
 
 This repository can run all experiments for SNAX.
 
-We increased the L1 memory size for our experiments, so build the container as follows
-
-From the root of this repository, run:
-
-```sh
-docker build . -f containers/snax.Containerfile -t ghcr.io/kuleuven-micas/accfg-experiments:latest
-```
-
-This build can take up to 5 minutes, depending on the amount of parallel make jobs you can run.
-Next, `cd` into `snax-mlir` and then:
+`cd` into `snax-mlir` and then:
 
 ```sh 
-docker run -itv $PWD:/repo:z ghcr.io/kuleuven-micas/accfg-experiments:latest
+docker run -itv $PWD:/repo:z ghcr.io/kuleuven-micas/snax:v0.1.6
 # inside the repository
 pip install -r /repo/snax-mlir/requirements.txt -e /repo/snax-mlir
 cd /repo/snax-mlir/kernels/streamer_matmul
