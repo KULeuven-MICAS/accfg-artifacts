@@ -4,17 +4,19 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 
-# Convert data to format that plotting script expects
 
-all_data = get_all_numbers.walk_folder("../results_papaer")
-
-def preprocess_data(data):
-    selected_columns = data[["option","size","p_meas","Ioc","p_attain_opt"]]
-    selected_columns = selected_columns.sort_values(["option", "size"])
-    selected_columns.columns = ['Name', 'Size', 'P_measured', 'I_conf', 'P_max_attain']
+def change_option_labels(data):
+    """
+    Change labels of data:
+        * NO_ACCFG_OPT -> Base
+        * OVERLAP_ONLY -> Overlapped
+        * DEDUP_ONLY   -> Deduplicated
+        * ACCFG_BOTH   -> All
+    """
+    data = data.sort_values(["option", "size"])
     category_map = {'NO_ACCFG_OPT': 'Base', 'OVERLAP_ONLY': 'Overlapped', 'DEDUP_ONLY': 'Deduplicated', 'ACCFG_BOTH': 'All'}
-    selected_columns['Name'] = selected_columns['Name'].cat.rename_categories(category_map)
-    return selected_columns
+    data['option'] = data['option'].cat.rename_categories(category_map)
+    return data 
 
 def plot_data(data, write=False, roofline=False, print_export=False):
     if print_export:
@@ -36,8 +38,8 @@ def plot_data(data, write=False, roofline=False, print_export=False):
     colors = tuple((r/256,g/256,b/256) for (r,g,b) in [(51,117,56),(93,168,153),(148,203,236),(220,205,125),(194,106,119),(159,74,150),(126,41,84)])
     sns.set_theme(style="ticks", palette=colors, rc=custom_params)
 
-    baseline = dict((row['Size'], row['P_measured']) for i,row in data.query("Name == 'Base'").iterrows())
-    ax = sns.barplot(data, x="Size", y="P_measured", hue="Name")
+    baseline = dict((row['size'], row['p_meas']) for i,row in data.query("option == 'Base'").iterrows())
+    ax = sns.barplot(data, x="size", y="p_meas", hue="option")
     ax.set_ylabel('$P_{measured}$ (ops/cycle)')
     ax.set_xlabel('Square Matrix Multiplication Size')
     ax.set_xlim(-0.5,5.5)
@@ -46,16 +48,16 @@ def plot_data(data, write=False, roofline=False, print_export=False):
 
     # Add little 'x' markers on top of the bars for P_attain
     for i, row in data.iterrows():
-        kind = key_order.index(row["Name"])
+        kind = key_order.index(row["option"])
         # Get the x position for the marker
-        x = ax.get_xticks()[list(data["Size"].unique()).index(row["Size"])] + (
+        x = ax.get_xticks()[list(data["size"].unique()).index(row["size"])] + (
             (kind - (len(key_order)/2)) * 0.2
         ) + 0.05 # adjust based on hue offset
         # Plot the 'x' marker
         if kind != 0:
-            rel_perf = row['P_measured'] / baseline[row["Size"]]
+            rel_perf = row['p_meas'] / baseline[row["size"]]
             ax.text(
-                x, row['P_measured'] + 10, f"×{rel_perf:.2f}", 
+                x, row['p_meas'] + 10, f"×{rel_perf:.2f}", 
                 size=7,
                 #color = "red" if rel_perf < 1 else None,
                 rotation=90,
@@ -74,5 +76,6 @@ def plot_data(data, write=False, roofline=False, print_export=False):
         plt.show()
 
 if __name__ == "__main__":
-    data = preprocess_data(all_data)
+    all_data = get_all_numbers.walk_folder("../results_papaer")
+    data = change_option_labels(all_data)
     plot_data(data)
