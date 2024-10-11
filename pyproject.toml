@@ -1,0 +1,19 @@
+[project]
+name = "accfg-artifacts"
+version = "0.1.0"
+description = "artifacts evaluation for accfg paper"
+authors = [
+    { name="Josse Van Delm", email="josse.vandelm@kuleuven.be" }
+]
+readme = "README.md"
+requires-python = ">=3.7"
+
+dependencies = [
+    "numpy",
+    "pandas",
+    "matplotlib",
+    "seaborn"
+]
+
+[tool.setuptools]
+packages = ["accfg_artifacts"]
