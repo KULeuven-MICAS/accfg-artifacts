@@ -4,7 +4,28 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator, MultipleLocator
-rc_fonts = {
+
+
+# Convert data to format that plotting script expects
+
+all_data = get_all_numbers.walk_folder("../results_papaer")
+
+
+selected_columns = all_data[["option","size","p_meas","Ioc","p_attain_opt"]].sort_values(["option", "size"])
+selected_columns.columns = ['Name', 'Size', 'P_measured', 'I_conf', 'P_max_attain']
+category_map = {'NO_ACCFG_OPT': 'Base', 'OVERLAP_ONLY': 'Overlapped', 'DEDUP_ONLY': 'Deduplicated', 'ACCFG_BOTH': 'All'}
+selected_columns['Name'] = selected_columns['Name'].replace(category_map)
+print(selected_columns)
+
+data = selected_columns
+
+not_print = False
+roofline = False
+
+# Plot data
+
+if not_print:
+    rc_fonts = {
     "font.family": "serif",
     "font.size": 20,
     'figure.figsize': (5, 3),
@@ -14,21 +35,13 @@ rc_fonts = {
         \usepackage{libertine}
         \usepackage[libertine]{newtxmath}
         """,
-}
+    }
+else:
+    rc_fonts = {}
+
 custom_params = {"axes.spines.right": False, "axes.spines.top": False, 'figure.figsize':(6,3), "ytick.left" : True, "figure.dpi":300, **rc_fonts}
-#colors = ["#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c"]
-# remove second blue to mark both our contributions green 
-#colors = ["#a6cee3", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c"]
-#colors = sns.color_palette("husl", 6)
 colors = tuple((r/256,g/256,b/256) for (r,g,b) in [(51,117,56),(93,168,153),(148,203,236),(220,205,125),(194,106,119),(159,74,150),(126,41,84)])
-#colors = tuple((r/256,g/256,b/256) for (r,g,b) in [(0,158,115),(0,114,178),(86,180,233),(230,159,0),(213,94,0),(204,121,167)])
 sns.set_theme(style="ticks", palette=colors, rc=custom_params)
-
-data = get_all_numbers.walk_folder("../results_papaer")
-#data = pd.read_csv("snax_results.csv")
-print(data)
-exit()
-
 
 
 baseline = dict((row['Size'], row['P_measured']) for i,row in data.query("Name == 'Base'").iterrows())
@@ -56,20 +69,9 @@ for i, row in data.iterrows():
             rotation=90,
         )
 
-# plot the P_max_attain
-x_vals = ax.get_xticks()
-y_vals = list(data.query("Name == 'Both'")['P_max_attain'])
-
-#ax.plot(
-#    [x_vals[i//2] + ((-1)**(i%2+1)*0.4) for i in range(2*len(x_vals))],
-#    [y_vals[i//2] for i in range(2*len(y_vals))],
-#    "r--",
-#    label="Max Attainable Perf",
-#    linewidth=0.8,
-#)
     
-
-#ax.plot([-.5,4.5],[512,512], linestyle='--', linewidth=.8, color=colors[-1], label="Roofline (512 ops/cycle)")
+if roofline:
+    ax.plot([-.5,5.5],[1024,1024], linestyle='--', linewidth=.8, color=colors[-1], label="Roofline (512 ops/cycle)")
 
 
 # Adding legend for the x markers
