@@ -23,6 +23,21 @@ jobs:
         working-directory: snax-mlir/kernels/streamer_matmul
         run: python3 genbenchmark.py
       - name: Install postprocessing requirements
-        run: pip install -r requirements.txt
+        run: pip install -e .
       - name: Run postprocessing
-        run: python3 get_all_numbers.py snax-mlir/kernels/streamer_matmul/results
+        run: python3 get_all_numbers.py ../snax-mlir/kernels/streamer_matmul/results -o results.pkl
+        working-directory: accfg_artifacts
+      - name: Create plot bar chart
+        run: python3 plot_snax.py --plot=bar_plot -i results.pkl -o bar_chart.png
+        working-directory: accfg_artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bar_chart 
+          path: bar_chart.png 
+      - name: Create plot roofline chart
+        run: python3 plot_snax.py --plot=roofline -i results.pkl -o roofline_chart.png
+        working-directory: accfg_artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: roofline
+          path: roofline_chart.png 
