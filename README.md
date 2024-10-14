@@ -1,4 +1,38 @@
 # ACCFG artifacts
 
-This repository can run all experiments in the `accfg` paper.
-Use it with container `ghcr.io/kuleuven-micas/snax:v0.1.6`
+## Installation and requirements
+
+We only test these instructions on Linux.
+
+Requirements:
+* git
+* docker
+
+### Getting the source
+
+This repository relies on submodules.
+Therefore, we recommmend cloning as follows:
+
+```sh
+git clone --recursive https://github.com/KULeuven-MICAS/accfg-artifacts
+```
+
+If you already cloned the repository, but forgot the `--recursive` flag, do:
+
+```sh
+git submodule update --init --recursive --remote
+```
+
+## SNAX experiments
+
+This repository can run all experiments for SNAX.
+
+`cd` into `snax-mlir` and then:
+
+```sh 
+docker run -itv $PWD:/repo:z ghcr.io/kuleuven-micas/snax:v0.1.6
+# inside the repository
+pip install -r /repo/snax-mlir/requirements.txt -e /repo/snax-mlir
+cd /repo/snax-mlir/kernels/streamer_matmul
+python3 genbenchmark.py
+```

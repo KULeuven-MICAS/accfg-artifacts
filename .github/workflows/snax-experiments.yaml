@@ -1,0 +1,24 @@
+name: Experiments SNAX
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  accfg-experiments-snax:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    container: 
+      image: ghcr.io/kuleuven-micas/snax:v0.1.6    
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Install snax-mlir
+        working-directory: snax-mlir
+        run: python3 -m pip install -r requirements.txt -e .
+      - name: Run accfg benchmarks
+        working-directory: snax-mlir/kernels/streamer_matmul
+        run: python3 genbenchmark.py
