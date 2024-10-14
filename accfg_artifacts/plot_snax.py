@@ -22,7 +22,7 @@ def change_option_labels(data):
 def bar_plot_data(data, colors, roofline=False, write=False):
 
 
-    baseline = dict((row['size'], row['p_meas']) for i,row in data.query("option == 'Base'").iterrows())
+    baseline = dict((row['size'], row['p_meas']) for _,row in data.query("option == 'Base'").iterrows())
     ax = sns.barplot(data, x="size", y="p_meas", hue="option")
     ax.set_ylabel('$P_{measured}$ (ops/cycle)')
     ax.set_xlabel('Square Matrix Multiplication Size')
@@ -31,7 +31,7 @@ def bar_plot_data(data, colors, roofline=False, write=False):
     key_order = ["Base", "Deduplicated", "Overlapped", "All"]
 
     # Add little 'x' markers on top of the bars for P_attain
-    for i, row in data.iterrows():
+    for _, row in data.iterrows():
         kind = key_order.index(row["option"])
         # Get the x position for the marker
         x = ax.get_xticks()[list(data["size"].unique()).index(row["size"])] + (
@@ -97,7 +97,7 @@ def roofline_plot_data(data, colors, bw_conf=2, p_peak=1024, write=False):
 
     # Shrink current axis by 20% to fit legend
     box = ax.get_position()
-    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+    ax.set_position((box.x0, box.y0, box.width * 0.8, box.height))
 
     # Extract handles and labels for separate legends
     handles, labels = ax.get_legend_handles_labels()
@@ -130,7 +130,7 @@ def roofline_plot_data(data, colors, bw_conf=2, p_peak=1024, write=False):
 if __name__ == "__main__":
 
     all_data = pd.read_pickle("josse.pkl")
-    #all_data = get_all_numbers.walk_folder("../results_papaer")
+    all_data = get_all_numbers.walk_folder("../results_papaer")
 
     print_export = False
 
@@ -150,9 +150,8 @@ if __name__ == "__main__":
         rc_fonts = {}
 
     custom_params = {"axes.spines.right": False, "axes.spines.top": False, 'figure.figsize':(6,3), "ytick.left" : True, "figure.dpi":300, **rc_fonts}
-
     colors = tuple((r/256,g/256,b/256) for (r,g,b) in [(51,117,56),(93,168,153),(148,203,236),(220,205,125),(194,106,119),(159,74,150),(126,41,84)])
     sns.set_theme(style="ticks", palette=colors, rc=custom_params)
     data = change_option_labels(all_data)
-    #bar_plot_data(data, colors=colors, write=True)
+    bar_plot_data(data, colors=colors, write=True)
     roofline_plot_data(data, colors=colors, write=True)
