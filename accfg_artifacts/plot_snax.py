@@ -2,6 +2,7 @@ import get_all_numbers
 import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.ticker import MultipleLocator
 
 
@@ -18,25 +19,8 @@ def change_option_labels(data):
     data['option'] = data['option'].cat.rename_categories(category_map)
     return data 
 
-def plot_data(data, write=False, roofline=False, print_export=False):
-    if print_export:
-        rc_fonts = {
-        "font.family": "serif",
-        "font.size": 20,
-        'figure.figsize': (5, 3),
-        "text.usetex": True,
-        'text.latex.preamble': 
-            r"""
-            \usepackage{libertine}
-            \usepackage[libertine]{newtxmath}
-            """,
-        }
-    else:
-        rc_fonts = {}
+def bar_plot_data(data, colors, roofline=False, write=False):
 
-    custom_params = {"axes.spines.right": False, "axes.spines.top": False, 'figure.figsize':(6,3), "ytick.left" : True, "figure.dpi":300, **rc_fonts}
-    colors = tuple((r/256,g/256,b/256) for (r,g,b) in [(51,117,56),(93,168,153),(148,203,236),(220,205,125),(194,106,119),(159,74,150),(126,41,84)])
-    sns.set_theme(style="ticks", palette=colors, rc=custom_params)
 
     baseline = dict((row['size'], row['p_meas']) for i,row in data.query("option == 'Base'").iterrows())
     ax = sns.barplot(data, x="size", y="p_meas", hue="option")
@@ -75,7 +59,100 @@ def plot_data(data, write=False, roofline=False, print_export=False):
     else:
         plt.show()
 
+def roofline_plot_data(data, colors, bw_conf=2, p_peak=1024, write=False):
+    xlim = [15, 5000]
+    ylim = [30,1300]
+
+
+    palette = dict(
+        zip((16, 32, 64, 128, 256, 512), colors)
+    )
+    # Create scatter plot
+    plt.rcParams.update({
+        #    'font.size': 8,               # Adjust overall font size
+        #    'axes.titlesize': 8,          # Font size of plot titles
+        #    'axes.labelsize': 8,          # Font size of x and y labels
+        #    'xtick.labelsize': 7,         # Font size of x-tick labels
+        #    'ytick.labelsize': 7,         # Font size of y-tick labels
+            'legend.fontsize': 7,         # Font size for legends
+            'legend.title_fontsize': 8,   # Font size for legend titles
+        })
+
+
+    ax = sns.scatterplot(data=data, x="Ioc", y="p_meas", hue="size", style="option", palette=palette)
+    plt.xscale("log")
+    plt.yscale("log")
+
+    # Plot rooflines
+    ax.plot(ax.get_xticks(), [p_peak for _ in ax.get_xticks()], "--", color="#000", linewidth=0.8, scalex=False, scaley=False)
+    ax.plot(ax.get_xticks(), [i * bw_conf for i in ax.get_xticks()], "--", color="#000", linewidth=0.8, scalex=False, scaley=False, label="Concurrent")
+    x_ticks = np.logspace(1, 4)
+    y_ticks = 1 / ((1 / p_peak) + (1 / (bw_conf * x_ticks)))
+    plt.plot(x_ticks, y_ticks, "r--", scalex=False, scaley=False, linewidth=0.8, label="Sequential")
+
+    ax.set_ylabel('$P_{measured}$(ops/cycle)')
+    ax.set_xlabel('$I_{OC}$ (ops/byte)')
+    plt.xlim(xlim)
+    plt.ylim(ylim)
+
+    # Shrink current axis by 20% to fit legend
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+
+    # Extract handles and labels for separate legends
+    handles, labels = ax.get_legend_handles_labels()
+
+    # Split handles and labels based on your data (Size vs. Name)
+    size_handles = handles[1:7]   # Assuming first 6 are sizes (adjust this based on actual output)
+    size_labels = labels[1:7]
+    name_handles = handles[8:12]   # Assuming rest are names (adjust accordingly)
+    name_labels = labels[8:12]
+
+    legend_fontsize=8
+    legend_columnspacing=0.5
+
+    # Adding the Size legend
+    size_legend = ax.legend(size_handles, size_labels, title="Square Matrix Multiplication Size", loc='upper center',fontsize=legend_fontsize, columnspacing=legend_columnspacing,
+                            bbox_to_anchor=(0.1, -0.25), ncol=3, fancybox=True, shadow=False)
+
+    # Adding the Name legend separately
+    ax.add_artist(size_legend)
+    ax.legend(name_handles, name_labels, title="Optimization", loc='upper center', fontsize=legend_fontsize, columnspacing=legend_columnspacing,
+              bbox_to_anchor=(0.7, -0.25), ncol=2, fancybox=True, shadow=False)
+
+    # Save the plot
+    if write:
+        plt.savefig('snax_roofline_plot.pdf',bbox_inches='tight')
+    else:
+        plt.show()
+
+
 if __name__ == "__main__":
-    all_data = get_all_numbers.walk_folder("../results_papaer")
+
+    all_data = pd.read_pickle("josse.pkl")
+    #all_data = get_all_numbers.walk_folder("../results_papaer")
+
+    print_export = False
+
+    if print_export:
+        rc_fonts = {
+        "font.family": "serif",
+        "font.size": 20,
+        'figure.figsize': (5, 3),
+        "text.usetex": True,
+        'text.latex.preamble': 
+            r"""
+            \usepackage{libertine}
+            \usepackage[libertine]{newtxmath}
+            """,
+        }
+    else:
+        rc_fonts = {}
+
+    custom_params = {"axes.spines.right": False, "axes.spines.top": False, 'figure.figsize':(6,3), "ytick.left" : True, "figure.dpi":300, **rc_fonts}
+
+    colors = tuple((r/256,g/256,b/256) for (r,g,b) in [(51,117,56),(93,168,153),(148,203,236),(220,205,125),(194,106,119),(159,74,150),(126,41,84)])
+    sns.set_theme(style="ticks", palette=colors, rc=custom_params)
     data = change_option_labels(all_data)
-    plot_data(data)
+    #bar_plot_data(data, colors=colors, write=True)
+    roofline_plot_data(data, colors=colors, write=True)
