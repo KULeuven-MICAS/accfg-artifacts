@@ -1,3 +1,6 @@
 [submodule "snax-mlir"]
 	path = snax-mlir
 	url = https://github.com/kuleuven-micas/snax-mlir
+[submodule "gemmini-rocc-tests"]
+	path = gemmini-rocc-tests
+	url = https://github.com/KULeuven-MICAS/gemmini-rocc-tests/
