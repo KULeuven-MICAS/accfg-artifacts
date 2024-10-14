@@ -32,7 +32,13 @@ This repository can run all experiments for SNAX.
 ```sh 
 docker run -itv $PWD:/repo:z ghcr.io/kuleuven-micas/snax:v0.1.6
 # inside the repository
-pip install -r /repo/snax-mlir/requirements.txt -e /repo/snax-mlir
+pip install -e . -e /repo/snax-mlir
 cd /repo/snax-mlir/kernels/streamer_matmul
 python3 genbenchmark.py
+cd /repo/accfg-artifacts
+# Perform post processing on the numbers themselves
+python3 get_all_numbers.py -i /repo/snax-mlir/kernels/streamer_matmul/results -o results.pkl
+# Plot the figures
+python3 plot_snax.py -i /repo/accfg_artifacts/results.pkl --plot=bar_plot -o bar_plot.png
+python3 plot_snax.py -i /repo/accfg_artifacts/results.pkl --plot=roofline -o roofline.png
 ```

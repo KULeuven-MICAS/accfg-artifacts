@@ -97,6 +97,13 @@ def main():
         type=str,
         help='Path to the results directory.'
     )
+    parser.add_argument(
+        '-o',
+        '--output_path',
+        type=str,
+        default=None,
+        help='Output path for .pkl creation.'
+    )
 
     # Parse the arguments
     args = parser.parse_args()
@@ -104,6 +111,8 @@ def main():
     if dataframe.empty:
         raise RuntimeError("No results were found")
     print(dataframe.sort_values(["size", "option"]))
+    if args.output_path is not None:
+        dataframe.to_pickle(args.output_path)
 
 if __name__ == "__main__":
     main()
