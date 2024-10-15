@@ -18,7 +18,7 @@ jobs:
           submodules: recursive
       - name: Build all tests
         run: |
-          gemmini-rocc-tests/build.sh
+          cd gemmini-rocc-tests && ./build.sh
       - name: Run and build all tiled matmul tests (GCC)
         run: |
           cd gemmini-rocc-tests/build && make test-baremetal-bareMetalC
