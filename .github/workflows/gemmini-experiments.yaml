@@ -1,4 +1,4 @@
-name: Experiments SNAX
+name: Experiments Gemmini
 
 on:
   push:
@@ -26,7 +26,7 @@ jobs:
         run: |
           cd gemmini-rocc-tests/bareMetalMLIR && make all_binaries all_binaries_no_opt
       - name: Install postprocessing requirements
-        run: pip install -e .
+        run: pip install -e . --break-system-packages
       - name: Run postprocessing
         run: python3 gemmini_get_all_numbers.py -i ../gemmini-rocc-tests -o results.pkl
         working-directory: accfg_artifacts
