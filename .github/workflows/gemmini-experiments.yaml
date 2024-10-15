@@ -28,7 +28,7 @@ jobs:
       - name: Install postprocessing requirements
         run: pip install -e . --break-system-packages
       - name: Run postprocessing
-        run: python3 gemmini_get_all_numbers.py -i ../gemmini-rocc-tests -o results.pkl
+        run: python3 gemmini_get_all_numbers.py ../gemmini-rocc-tests -o results.pkl
         working-directory: accfg_artifacts
       - uses: actions/upload-artifact@v4
         with:
