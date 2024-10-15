@@ -25,9 +25,6 @@ jobs:
       - name: build tiled matmul tests (MLIR)
         run: |
           cd gemmini-rocc-tests/bareMetalMLIR && make all_binaries all_binaries_no_opt
-      - name: Install snax-mlir
-        working-directory: snax-mlir
-        run: python3 -m pip install -r requirements.txt -e . --break-system-packages
       - name: Install postprocessing requirements
         run: pip install -e .
       - name: Run postprocessing
