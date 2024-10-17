@@ -18,14 +18,16 @@ def change_option_labels(data):
     data = data.sort_values(["option", "size"])
     category_map = {'NO_ACCFG_OPT': 'Base', 'OVERLAP_ONLY': 'Overlapped', 'DEDUP_ONLY': 'Deduplicated', 'ACCFG_BOTH': 'All'}
     data['option'] = data['option'].cat.rename_categories(category_map)
+    #data = data[data['size'] == 256]
     return data 
+
 
 def bar_plot_data(data, colors, filename, roofline=False, write=False):
 
 
     baseline = dict((row['size'], row['p_meas']) for _,row in data.query("option == 'Base'").iterrows())
     ax = sns.barplot(data, x="size", y="p_meas", hue="option")
-    ax.set_ylabel('$P_{measured}$ (ops/cycle)')
+    ax.set_ylabel('P (ops/cycle)')
     ax.set_xlabel('Square Matrix Multiplication Size')
     ax.set_xlim(-0.5,5.5)
 
@@ -56,13 +58,15 @@ def bar_plot_data(data, colors, filename, roofline=False, write=False):
     ax.yaxis.set_major_locator(MultipleLocator(128))
     ax.yaxis.set_minor_locator(MultipleLocator(32))
     if write:
-        plt.savefig(filename,bbox_inches='tight')
+        plt.savefig(filename,bbox_inches='tight', transparent=True)
     else:
         plt.show()
 
 def roofline_plot_data(data, filename, colors, bw_conf=2, p_peak=1024, write=False):
-    xlim = [15, 5000]
-    ylim = [30,1300]
+    #xlim = [10, 5000]
+    xlim = [400, 3000]
+    ylim = [400,1300]
+    #ylim = [30,1300]
 
 
     palette = dict(
@@ -86,8 +90,9 @@ def roofline_plot_data(data, filename, colors, bw_conf=2, p_peak=1024, write=Fal
     y_ticks = 1 / ((1 / p_peak) + (1 / (bw_conf * x_ticks)))
     plt.plot(x_ticks, y_ticks, "r--", scalex=False, scaley=False, linewidth=0.8, label="Sequential")
 
-    ax.set_ylabel('$P_{measured}$(ops/cycle)')
-    ax.set_xlabel('$I_{OC}$ (ops/byte)')
+    #ax.set_ylabel('$P_{measured}$(ops/cycle)')
+    ax.set_ylabel('P (ops/cycle)')
+    ax.set_xlabel('Ioc (ops/byte)')
     plt.xlim(xlim)
     plt.ylim(ylim)
 
@@ -118,7 +123,7 @@ def roofline_plot_data(data, filename, colors, bw_conf=2, p_peak=1024, write=Fal
 
     # Save the plot
     if write:
-        plt.savefig(filename, bbox_inches='tight')
+        plt.savefig(filename, bbox_inches='tight', transparent=True)
     else:
         plt.show()
 
@@ -173,7 +178,7 @@ def main():
             """,
         }
     else:
-        rc_fonts = {}
+        rc_fonts = {"font.family": "Inter 18pt",}
 
     if args.output_path is None:
         write = False
