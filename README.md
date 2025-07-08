@@ -27,7 +27,7 @@ git submodule update --init --recursive --remote
 
 This repository can run all experiments for SNAX.
 
-`cd` into `snax-mlir` and then:
+`cd` into `accfg-artifacts` and then:
 
 ```sh 
 docker run -itv $PWD:/repo:z ghcr.io/kuleuven-micas/snax:v0.1.6
@@ -41,4 +41,24 @@ python3 get_all_numbers.py -i /repo/snax-mlir/kernels/streamer_matmul/results -o
 # Plot the figures
 python3 plot_snax.py -i /repo/accfg_artifacts/results.pkl --plot=bar_plot -o bar_plot.png
 python3 plot_snax.py -i /repo/accfg_artifacts/results.pkl --plot=roofline -o roofline.png
+```
+
+## Gemmini Experiments
+
+This repository can run all experiments for Gemmini
+
+`cd` into `accfg-artifacts` and then:
+
+```sh
+docker run -itv $PWD:/repo:z ghcr.io/kuleuven-micas/gemmini-test:latest
+# Prepare folder structure and object files by building all tests
+cd gemmini-rocc-tests && ./build.sh
+# Run and build all tiled matmul tests (GCC)
+cd gemmini-rocc-tests/build && make test-baremetal-bareMetalC
+# name: build tiled matmul tests (MLIR and MLIR optimized)
+cd gemmini-rocc-tests/bareMetalMLIR && make all_binaries all_binaries_no_opt
+# Install postprocessing requirements
+pip install -e . --break-system-packages
+# Run postprocessing and number gathering
+cd accfg_artifacts && python3 gemmini_get_all_numbers.py ../gemmini-rocc-tests -o results.pkl
 ```

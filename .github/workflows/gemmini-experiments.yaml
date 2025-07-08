@@ -9,7 +9,7 @@ on:
 jobs:
   accfg-experiments-gemmini:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 120
     container: 
       image: ghcr.io/kuleuven-micas/gemmini-test:latest
     steps:
