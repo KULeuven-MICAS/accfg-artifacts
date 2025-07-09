@@ -1,0 +1,36 @@
+name: Experiments Gemmini
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  accfg-experiments-gemmini:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    container: 
+      image: ghcr.io/kuleuven-micas/gemmini-test:latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Build all tests
+        run: |
+          cd gemmini-rocc-tests && ./build.sh
+      - name: Run and build all tiled matmul tests (GCC)
+        run: |
+          cd gemmini-rocc-tests/build && make test-baremetal-bareMetalC
+      - name: build tiled matmul tests (MLIR)
+        run: |
+          cd gemmini-rocc-tests/bareMetalMLIR && make all_binaries all_binaries_no_opt
+      - name: Install postprocessing requirements
+        run: pip install -e . --break-system-packages
+      - name: Run postprocessing
+        run: python3 gemmini_get_all_numbers.py ../gemmini-rocc-tests -o results.pkl
+        working-directory: accfg_artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: results.pkl
+          path: accfg_artifacts/results.pkl
