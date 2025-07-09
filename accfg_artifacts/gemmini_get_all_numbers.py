@@ -25,31 +25,25 @@ def get_spike_data(input_folder):
             * stdout: spike stdout log, logs what is printf'ed by the program, 
                       regexed on first "Cycles taken:" number that is encountered
         """
-        process = subprocess.Popen(
-            command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, 
-            universal_newlines=True  # This makes the output a string instead of bytes
-        )
-        stdout, stderr = process.communicate()
-        # Run fgrep with LC_ALL=C locale to speed up search
-        env = os.environ.copy()
-        env["LC_ALL"] = "C"  # Set LC_ALL=C
-        fgrep_process = subprocess.Popen(
-            ['fgrep', 'unknown'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, 
-            universal_newlines=True, env=env  # Pass the environment variable to fgrep
-        )
-        fgrep_output, _ = fgrep_process.communicate(input=stderr)
-        # Count amount of occurences with `wc -l`
-        wc_process = subprocess.Popen(
-            ['wc', '-l'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True
-        )
-        wc_output, _ = wc_process.communicate(input=fgrep_output)
-        # Get the amount of the program
-        unknown_count = int(wc_output.strip())
+        process = subprocess.Popen(command, stderr=subprocess.STDOUT, stdout=subprocess.PIPE, text=True)
 
-        # Regex the output of the program - looks for the line 'Cycles taken: <number>
-        stdout_pattern = r"Cycles taken: (\d+)"  
-        stdout_match = re.search(stdout_pattern, stdout)
-        cycles = int(stdout_match.group(1)) if stdout_match else None
+        cycles = None
+        stdout_pattern = re.compile(r"Cycles taken: (\d+)")
+        unknown_count = 0
+        lines = 0
+        # check each line in process output for cycles taken statement and if it contains "unknown"
+        while True:
+            line = process.stdout.readline()
+            if line == "":
+                break
+            # Regex the output of the program - looks for the line 'Cycles taken: <number>
+            if cycles is None:
+                stdout_match = re.search(stdout_pattern, line)
+                cycles = int(stdout_match.group(1)) if stdout_match else None
+            if 'unknown' in line:
+                unknown_count += 1
+
+        assert cycles is not None
 
         # Append the extracted values to a dataframe for further processing
         data.append({"option": option, "size": size, "rocc": unknown_count, "cycles": cycles})
