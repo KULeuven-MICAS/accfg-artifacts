@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     container: 
-      image: ghcr.io/kuleuven-micas/snax:v0.1.6    
+      image: ghcr.io/kuleuven-micas/accfg-artifacts:latest
     steps:
       - uses: actions/checkout@v3
         with:

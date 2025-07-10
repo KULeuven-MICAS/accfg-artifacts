@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     container: 
-      image: ghcr.io/kuleuven-micas/gemmini-test:latest
+      image: ghcr.io/kuleuven-micas/accfg-artifacts:latest
     steps:
       - uses: actions/checkout@v4
         with:
