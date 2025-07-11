@@ -210,10 +210,10 @@ The columns have the following meaning:
 - **size:** Square Matrix Size (32 means 32x32x32)
 - **rocc:** Number of ROCC configuration instructions used
 - **cycles:** Number of *instructions* used to configure the accelerator (note that spike simplifies cycles=instructions). We approximate the number of cycles by multiplying with 3. See paper footnote 3 (line 659) for more information.
-- **ops:** Computational complexity of the kernel. Calculated as $$2 * size^3$$
-- **bw_conf_eff:** Effective configuration bandwidth. Calculated as $$\frac{16 * rocc}{cycles * 3}$$. The paper gives the formula for this in equation 4.
+- **ops:** Computational complexity of the kernel. Calculated as $$2 * \text{size}^3$$
+- **bw_conf_eff:** Effective configuration bandwidth. Calculated as $$\frac{16 * \text{rocc}}{\text{cycles} * 3}$$. The paper gives the formula for this in equation 4.
   - Each rocc instruction configures 2 registers worth of data, so 2 * 8 bytes
   - As stated above, spike assumes each instruction takes 1 cycle, we correct by that by multiplying by 3. See the paper for more details on this.
-- **Ioc:** Operation-to-configuration complexity, the amount of accelerator operations that can be executed per byte of configuration. Calculated as $$\frac{ops}{3 * rocc}$$
+- **Ioc:** Operation-to-configuration complexity, the amount of accelerator operations that can be executed per byte of configuration. Calculated as $$\frac{\text{ops}}{3 * \text{rocc}}$$
 - **p_attain_seq:** Attained performance in sequential mode, calculated according to equation 3 in the paper from **Ioc**, **bw_conf_eff** and the stated **P_peak** of Gemmini of 512 ops/cycle.
 
