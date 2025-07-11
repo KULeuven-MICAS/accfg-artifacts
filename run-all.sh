@@ -13,8 +13,8 @@ mkdir -p /repo/artifacts
 pip install /repo -e /repo/snax-mlir --break-system-packages
 cd /repo/snax-mlir/kernels/streamer_matmul
 python3 genbenchmark.py
-cd /repo/accfg-artifacts
-python3 get_all_numbers.py -i /repo/snax-mlir/kernels/streamer_matmul/results -o /repo/artifacts/opengemm_results.pkl
+cd /repo/accfg_artifacts
+python3 get_all_numbers.py /repo/snax-mlir/kernels/streamer_matmul/results -o /repo/artifacts/opengemm_results.pkl
 python3 plot_snax.py -i /repo/artifacts/opengemm_results.pkl --plot=bar_plot -o /repo/artifacts/fig_11_bar_plot.png
 python3 plot_snax.py -i /repo/artifacts/opengemm_results.pkl --plot=roofline -o /repo/artifacts/fig_12_roofline.png
 
