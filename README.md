@@ -1,5 +1,11 @@
 # Artifacts Evaluation for - The Configuration Wall: Characterization and Elimination of Accelerator Configuration Overhead Automatic  
 
+## Claims:
+
+1. Performance on OpenGEMM is improved by 2x geomean, and up to 2.71x for some sizes through our optimizations.
+2. Performance on Gemmini is improved by 11% geoman.
+3. Figures 10, 11 and 12 in the paper can be reproduced.
+
 ## Installation and requirements
 
 **Software Requirements:**
@@ -197,22 +203,17 @@ Here we measure the `csrw` instructions which write configuration to OpenGemm, t
 For Gemmini, the following table will be printed out:
 
 ```
-               option  size  rocc  cycles        ops  bw_conf_eff           Ioc  p_attain_seq
-0          C baseline    32    12     117      65536     0.547009    341.333333           137
-1                MLIR    32    12      79      65536     0.810127    341.333333           180
-2   MLIR deduplicated    32    12      85      65536     0.752941    341.333333           171
-3          C baseline    64    12     120     524288     0.533333   2730.666667           379
-4                MLIR    64    12      83     524288     0.771084   2730.666667           412
-5   MLIR deduplicated    64    12      89     524288     0.719101   2730.666667           406
-6          C baseline   128    30     607    4194304     0.263591   8738.133333           419
-7                MLIR   128    30     171    4194304     0.935673   8738.133333           482
-8   MLIR deduplicated   128    26     167    4194304     0.830339  10082.461538           482
-9          C baseline   256    78    1373   33554432     0.302986  26886.564103           482
-10               MLIR   256    78     283   33554432     1.469965  26886.564103           505
-11  MLIR deduplicated   256    58     259   33554432     1.194337  36157.793103           506
-12         C baseline   512   258    4159  268435456     0.330849  65027.968992           500
-13               MLIR   512   258    1110  268435456     1.239640  65027.968992           509
-14  MLIR deduplicated   512   178     482  268435456     1.969571  94254.022472           511
+              option  size  rocc  cycles        ops  bw_conf_eff           Ioc  p_attain_seq
+8         C baseline    32    12     117      65536     0.547009    341.333333           137
+9  MLIR deduplicated    32    12      85      65536     0.752941    341.333333           171
+6         C baseline    64    12     120     524288     0.533333   2730.666667           379
+7  MLIR deduplicated    64    12      89     524288     0.719101   2730.666667           406
+4         C baseline   128    30     607    4194304     0.263591   8738.133333           419
+5  MLIR deduplicated   128    26     167    4194304     0.830339  10082.461538           482
+2         C baseline   256    78    1373   33554432     0.302986  26886.564103           482
+3  MLIR deduplicated   256    58     259   33554432     1.194337  36157.793103           506
+0         C baseline   512   258    4159  268435456     0.330849  65027.968992           500
+1  MLIR deduplicated   512   178     482  268435456     1.969571  94254.022472           511
 ```
 
 The columns have the following meaning:
