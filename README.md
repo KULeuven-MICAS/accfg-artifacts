@@ -72,7 +72,7 @@ pip install /repo -e /repo/snax-mlir
 ```
 **Explanation:** Install the experiments package and prerequisites to gather and plot experiment results.
 
-*~ 1 minute*
+*~ 1 minute.*
 
 ```sh
 cd /repo/snax-mlir/kernels/streamer_matmul
@@ -80,7 +80,7 @@ python3 genbenchmark.py
 ```
 **Explanation:** Compile all binaries for the OpenGEMM system, and run them in a pre-compiled verilator simulation-binary.
 
-*~ 15 minutes*
+*~ 15 minutes.*
 
 ```sh
 cd /repo/accfg-artifacts
@@ -89,7 +89,7 @@ python3 get_all_numbers.py -i /repo/snax-mlir/kernels/streamer_matmul/results -o
 ```
 **Explanation:** Gather performance data of all results and dump in a small pickle file (contains a pandas DataFrame)
 
-*~ <1 minute*
+*~ <1 minute.*
 
 ```sh
 # Plot the figures
@@ -99,7 +99,7 @@ python3 plot_snax.py -i /repo/artifacts/gemmini_results.pkl --plot=roofline -o /
 
 **Explanation:** From the results in the pickle file, make bar chart and roofline plot.
 
-*~ <1 minute*
+*~ <1 minute.*
 
 ### Gemmini Experiments (~ 1h 30 minutes)
 
@@ -126,7 +126,7 @@ cd /repo/gemmini-rocc-tests/bareMetalMLIR && make all_binaries_opt all_binaries_
 
 **Explanation:** Build all binaries for simulation. This includes C binaries, non-optimized MLIR and optimized MLIR binaries.
 
-*~ <2 minutes*
+*~ <2 minutes.*
 
 ```
 # Install postprocessing requirements
@@ -139,7 +139,7 @@ python3 accfg_artifacts/gemmini_get_all_numbers.py gemmini-rocc-tests -o /repo/a
 The `gemmini_get_all_numbers` script runs all spike simulations, watches the stdout for cycles/instruction printing, and dumps all instructions executed to count the amount of special RoCC instructions are executed.
 All this information is stored in the pickle file.
 
-*~ 1h 30 minutes*
+*~ 1h 30 minutes.*
 
 ```
 python3 plot_gemmini.py -i /repo/artifacts/gemmini_results.pkl -o /repo/artifacts/fig_10_bar_plot.png
@@ -147,7 +147,7 @@ python3 plot_gemmini.py -i /repo/artifacts/gemmini_results.pkl -o /repo/artifact
 
 **Explanation:** From the results in the pickle file, make plots.
 
-*~ <1 minute*
+*~ <1 minute.*
 
 ## Understanding the Results:
 
