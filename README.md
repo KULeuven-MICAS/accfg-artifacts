@@ -27,11 +27,9 @@ These requirements should be plenty:
 * 16 GB of free disk space
 
 
-**Note on time:** On modern Desktop CPUs we saw times at around ~30 minutes to complete the entire evaluation, but 
-lower-power CPUs seem to struggle a lot with these simulation workloads.
-
-All time estimations are based on typical student machines, where there is access to a fast workstation, times can
-be expected to be significantly lower.
+**Note on time:** On modern Desktop CPUs we saw times at around ~15 minutes to complete the entire evaluation, but 
+lower-power CPUs seem to struggle a lot with the simulation workloads. We based our time estimations on typical
+student machine. If there is access to a fast workstation, times can be expected to be significantly lower.
 
 ### Getting the source (~ <1 minute)
 
