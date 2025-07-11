@@ -31,6 +31,16 @@ These requirements should be plenty:
 lower-power CPUs seem to struggle a lot with the simulation workloads. We based our time estimations on typical
 student machine. If there is access to a fast workstation, times can be expected to be significantly lower.
 
+### Basic Test:
+
+A basic test to see if everything is working (next to just running `run-all.sh` and see if it crashes), is to run the simple `hello-world.sh` inside the docker container:
+
+```bash
+docker run --rm -itv $PWD:/repo:z ghcr.io/kuleuven-micas/accfg-artifacts:latest /repo/hello-world.sh
+```
+
+This should install all dependencies and check that all binaries are found and working. At the end it will print `If you see this, all is well!`.
+
 ### Getting the source (~ <1 minute)
 
 To run the experiments in this repository, please clone the repository
