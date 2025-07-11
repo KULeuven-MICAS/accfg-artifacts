@@ -65,4 +65,5 @@ cd /repo/gemmini-rocc-tests/bareMetalMLIR && make all_binaries all_binaries_no_o
 cd /repo && pip install . --break-system-packages
 # Run postprocessing and number gathering
 python3 accfg_artifacts/gemmini_get_all_numbers.py gemmini-rocc-tests -o /repo/artifacts/gemmini_results.pkl
+python3 plot_gemmini.py -i /repo/accfg_artifacts/gemmini_results.pkl -o gemmini_barplot.png
 ```
