@@ -3,7 +3,7 @@
 ## Claims:
 
 1. Performance on OpenGEMM is improved by 1.99x geomean, and up to 2.71x for some sizes through our optimizations.
-2. Performance on Gemmini is improved by 10.5% geoman.
+2. Performance on Gemmini is improved by 10.5% geomean.
 3. Figures 10, 11 and 12 in the paper can be reproduced.
 
 ## Installation and requirements
@@ -127,14 +127,14 @@ The docker contains all required simulators, compilers to compile the binaries t
 # Prepare folder structure and object files by building all tests
 cd /repo/gemmini-rocc-tests && ./build.sh
 # name: build tiled matmul tests (MLIR and MLIR optimized)
-cd /repo/gemmini-rocc-tests/bareMetalMLIR && make all_binaries_opt all_binaries_no_opt
+cd /repo/gemmini-rocc-tests/bareMetalMLIR && make all_binaries_opt
 ```
 
-**Explanation:** Build all binaries for simulation. This includes C binaries, non-optimized MLIR and optimized MLIR binaries.
+**Explanation:** Build all binaries for simulation. This includes C binaries and optimized MLIR binaries.
 
 *~ <2 minutes.*
 
-```
+```sh
 # Install postprocessing requirements
 cd /repo && pip install . --break-system-packages
 # Run postprocessing and number gathering
@@ -147,7 +147,7 @@ All this information is stored in the pickle file.
 
 *~ 1h 30 minutes.*
 
-```
+```sh
 python3 plot_gemmini.py -i /repo/artifacts/gemmini_results.pkl -o /repo/artifacts/fig_10_bar_plot.png
 ```
 
@@ -197,6 +197,20 @@ OpenGemm Data:
 ```
 
 Here we measure the various `csr` instructions which write configuration to OpenGemm, together with cycle counts for the kernel (not shown in this print, but can be found inside the DataFrame when inspecting). From these we calculate the final measured attained performance `P_meas`.
+- **size**: Square Matrix Size (32 means 32x32x32)
+- **option**: Optimization option: `Base` means no optimizations, `Deduplicated` means just use deduplication, and `Overlapped` means just overlapping. `With Optimizations` uses both deduplication and overlapping
+- **csrw**: Number of traced RISC-V CSRW instructions in simulation.
+- **csrwi**: Number of traced RISC-V CSRWI instructions in simulation.
+- **cycles**: Cycles used to configure the accelerator. This is a verilator-based and thus cycle-accurate simulation.
+- **cycles_peak**: Cycles the matrix multiply would take if the accelerator were to operate at peak performance. 
+- **no_opt_cycles**: Cycles of baseline, used to calculate speedup.
+- **setup_ins**: sum of CSRW and CSRWI instructions.
+- **Ioc:** Operation-to-configuration complexity, the amount of accelerator operations that can be executed per byte of configuration. Calculated as $$\frac{\text{ops}}{\frac{5}{8} \cdot \text{csrwi} + 4 \cdot \text{csrw}}$$
+- **p_attain_seq**: Maximum attainable performance for sequential configuration.
+- **p_attain_conc**: Maximum attainable performance for concurrent configuration.
+- **p_attain_opt**: Maximum attainable performance for sequential configuration when used without overlapping, and for concurrent configuration when used with overlapping.
+- **p_meas**: Actual measured performance. 
+
 
 ### Gemmini:
 
@@ -220,11 +234,11 @@ The columns have the following meaning:
 
 - **size:** Square Matrix Size (32 means 32x32x32)
 - **rocc:** Number of ROCC configuration instructions used
-- **cycles:** Number of *instructions* used to configure the accelerator (note that spike simplifies cycles=instructions). We approximate the number of cycles by multiplying with 3. See paper footnote 3 (line 659) for more information.
+- **cycles:** Number of *instructions* used to configure the accelerator (note that since spike is only instruction accurate cycles=instructions). We approximate the actual number of cycles by multiplying with 3. See paper footnote 3 (line 659) for more information.
 - **ops:** Computational complexity of the kernel. Calculated as $$2 \cdot \text{size}^3$$
 - **bw_conf_eff:** Effective configuration bandwidth. Calculated as $$\frac{16 \cdot \text{rocc}}{3 \cdot \text{cycles}}$$. The paper gives the formula for this in equation 4.
   - Each rocc instruction configures 2 registers worth of data, so 2 * 8 bytes
   - As stated above, spike assumes each instruction takes 1 cycle, we correct by that by multiplying by 3. See the paper for more details on this.
-- **Ioc:** Operation-to-configuration complexity, the amount of accelerator operations that can be executed per byte of configuration. Calculated as $$\frac{\text{ops}}{3 \cdot \text{rocc}}$$
+- **Ioc:** Operation-to-configuration complexity, the amount of accelerator operations that can be executed per byte of configuration. Calculated as $$\frac{\text{ops}}{\text{rocc}}$$
 - **p_attain_seq:** Attained performance in sequential mode, calculated according to equation 3 in the paper from **Ioc**, **bw_conf_eff** and the stated **P_peak** of Gemmini of 512 ops/cycle.
 
