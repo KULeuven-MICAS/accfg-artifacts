@@ -25,7 +25,7 @@ git submodule update --init --recursive --remote
 
 ## Running all experiments:
 
-Use the `run-all.sh` script to run all experiments: `docker run --rm -itv $PWD:/repo:z ghcr.io/kuleuven-micas/accfg-artifacts:latest /repo/run-all.sh`
+After cloning the repository with all submodules, `cd` into it, and run the `./run-all.sh` script. This will spawn the docker container automatically and run itself within it. You can alternatively start the docker container manually using: `docker run --rm -itv $PWD:/repo:z ghcr.io/kuleuven-micas/accfg-artifacts:latest /repo/run-all.sh`
 
 Or, run individual experiments like so:
 
