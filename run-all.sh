@@ -6,9 +6,6 @@ if ! mountpoint -q /repo; then
 	exit 0
 fi
 
-# create final artifact output folder
-mkdir -p /repo/artifacts
-
 # OpenGEMM Experiments:
 pip install /repo -e /repo/snax-mlir --break-system-packages
 cd /repo/snax-mlir/kernels/streamer_matmul
