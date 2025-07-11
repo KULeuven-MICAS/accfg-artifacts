@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -eu -o pipefail
 
-if ! mountpoint /repo; then
-	docker run --rm -itv $PWD:/repo:z ghcr.io/kuleuven-micas/gemmini-test:latest /repo/run-all.sh || exit 1
+if ! mountpoint -q /repo; then
+	docker run --rm -itv $PWD:/repo:z ghcr.io/kuleuven-micas/accfg-artifacts:latest /repo/run-all.sh || exit 1
 	exit 0
 fi
 
