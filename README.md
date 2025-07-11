@@ -146,3 +146,74 @@ python3 plot_gemmini.py -i /repo/accfg_artifacts/gemmini_results.pkl -o gemmini_
 
 _~ <1 minute_
 
+## Understanding the Results:
+
+### OpenGEMM:
+
+For OpenGEMM, the following table will be printed out:
+
+```
+    size              option   csrw  ...  p_attain_conc  p_attain_opt      p_meas
+4     16         Base (MLIR)     40  ...      78.019048     72.495575   48.473373
+8     32         Base (MLIR)    160  ...     156.038095    135.404959  107.789474
+0     64         Base (MLIR)    640  ...     312.076190    239.182482  199.804878
+20   128         Base (MLIR)   2560  ...     624.152381    387.786982  338.796769
+12   256         Base (MLIR)  12288  ...    1024.000000    531.732252  510.784144
+16   512         Base (MLIR)  49152  ...    1024.000000    699.983979  682.194771
+5     16        Deduplicated     19  ...     167.397190    143.877058   97.523810
+9     32        Deduplicated     55  ...     469.161521    321.747775  261.099602
+1     64        Deduplicated    199  ...    1024.000000    516.698984  461.521127
+21   128        Deduplicated    775  ...    1024.000000    693.194616  619.817349
+13   256        Deduplicated   3081  ...    1024.000000    827.808266  777.028738
+17   512        Deduplicated  12297  ...    1024.000000    915.717975  884.763433
+6     16          Overlapped     60  ...      53.065587     53.065587   36.408889
+10    32          Overlapped    200  ...     126.334458    126.334458   97.669151
+2     64          Overlapped    720  ...     279.247936    279.247936  222.911565
+22   128          Overlapped   2720  ...     589.501616    589.501616  479.842581
+14   256          Overlapped  12672  ...    1024.000000   1024.000000  818.600439
+18   512          Overlapped  49920  ...    1024.000000   1024.000000  916.546728
+7     16  With Optimizations     25  ...     134.432821    134.432821   90.021978
+11    32  With Optimizations     67  ...     400.372661    400.372661  292.571429
+3     64  With Optimizations    223  ...     952.060833    952.060833  541.619835
+23   128  With Optimizations    823  ...    1024.000000   1024.000000  694.881378
+15   256  With Optimizations   3177  ...    1024.000000   1024.000000  834.770425
+19   512  With Optimizations  12489  ...    1024.000000   1024.000000  921.502276
+```
+
+Here we measure the `csrw` instructions which write configuration to OpenGemm, together with cycle counts for the kernel (not shown in this print, but can be found inside the DataFrame when inspecting).
+
+### Gemmini:
+
+For Gemmini, the following table will be printed out:
+
+```
+               option  size  rocc  cycles        ops  bw_conf_eff           Ioc  p_attain_seq
+0          C baseline    32    12     117      65536     0.547009    341.333333           137
+1                MLIR    32    12      79      65536     0.810127    341.333333           180
+2   MLIR deduplicated    32    12      85      65536     0.752941    341.333333           171
+3          C baseline    64    12     120     524288     0.533333   2730.666667           379
+4                MLIR    64    12      83     524288     0.771084   2730.666667           412
+5   MLIR deduplicated    64    12      89     524288     0.719101   2730.666667           406
+6          C baseline   128    30     607    4194304     0.263591   8738.133333           419
+7                MLIR   128    30     171    4194304     0.935673   8738.133333           482
+8   MLIR deduplicated   128    26     167    4194304     0.830339  10082.461538           482
+9          C baseline   256    78    1373   33554432     0.302986  26886.564103           482
+10               MLIR   256    78     283   33554432     1.469965  26886.564103           505
+11  MLIR deduplicated   256    58     259   33554432     1.194337  36157.793103           506
+12         C baseline   512   258    4159  268435456     0.330849  65027.968992           500
+13               MLIR   512   258    1110  268435456     1.239640  65027.968992           509
+14  MLIR deduplicated   512   178     482  268435456     1.969571  94254.022472           511
+```
+
+The columns have the following meaning:
+
+- **size:** Square Matrix Size (32 means 32x32x32)
+- **rocc:** Number of ROCC configuration instructions used
+- **cycles:** Number of *instructions* used to configure the accelerator (note that spike simplifies cycles=instructions). We approximate the number of cycles by multiplying with 3. See paper footnote 3 (line 659) for more information.
+- **ops:** Computational complexity of the kernel. Calculated as $$2 * size^3$$
+- **bw_conf_eff:** Effective configuration bandwidth. Calculated as $$\frac{16 * rocc}{cycles * 3}$$. The paper gives the formula for this in equation 4.
+  - Each rocc instruction configures 2 registers worth of data, so 2 * 8 bytes
+  - As stated above, spike assumes each instruction takes 1 cycle, we correct by that by multiplying by 3. See the paper for more details on this.
+- **Ioc:** Operation-to-configuration complexity, the amount of accelerator operations that can be executed per byte of configuration. Calculated as $$\frac{ops}{3 * rocc}$$
+- **p_attain_seq:** Attained performance in sequential mode, calculated according to equation 3 in the paper from **Ioc**, **bw_conf_eff** and the stated **P_peak** of Gemmini of 512 ops/cycle.
+
