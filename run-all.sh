@@ -24,3 +24,6 @@ cd /repo
 python3 accfg_artifacts/gemmini_get_all_numbers.py gemmini-rocc-tests -o /repo/artifacts/gemmini_results.pkl
 cd /repo/accfg_artifacts
 python3 plot_gemmini.py -i /repo/artifacts/gemmini_results.pkl -o /repo/artifacts/fig10_bar_plot.png
+
+# Show final results:
+python3 /repo/accfg_artifacts/show_results.py -i /repo/artifacts/

@@ -9,7 +9,6 @@ def process_data(data):
     data["bw_conf_eff"] = 16*data["rocc"]/(data["cycles"]*3)
     data["Ioc"] = data["ops"]/(data["rocc"]*16)
     data["p_attain_seq"] =  round(1 / ((1/512) + (1/(data["Ioc"]*data["bw_conf_eff"])))).astype(int)
-    print(data)
     data_simple = data.query("option in ['C baseline', 'MLIR deduplicated']")
     return data_simple
 

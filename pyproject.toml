@@ -12,7 +12,8 @@ dependencies = [
     "numpy",
     "pandas",
     "matplotlib",
-    "seaborn"
+    "seaborn",
+    "scipy"
 ]
 
 [tool.setuptools]

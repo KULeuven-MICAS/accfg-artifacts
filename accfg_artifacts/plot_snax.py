@@ -21,8 +21,6 @@ def change_option_labels(data):
     return data 
 
 def bar_plot_data(data, colors, filename, roofline=False, write=False):
-
-    print(data)
     data = data.query('option == "Base (MLIR)" or option == "With Optimizations"')
     data['option'] = data['option'].cat.remove_unused_categories()
     baseline = dict((row['size'], row['p_meas']) for i,row in data.query("option == 'Base (MLIR)'").iterrows())
@@ -168,9 +166,6 @@ def roofline_plot_data(data, filename, colors, bw_conf=2, p_peak=1024, write=Fal
 
     ## Adding the Name legend separately
     ax.add_artist(size_legend)
-    print(name_handles)
-    print("help")
-    print(name_handles)
     ax.legend(name_handles, name_labels, title="Optimization", loc='upper center', fontsize=legend_fontsize, columnspacing=legend_columnspacing,
               bbox_to_anchor=(0.7, -0.25), ncol=2, fancybox=True, shadow=False)
 
