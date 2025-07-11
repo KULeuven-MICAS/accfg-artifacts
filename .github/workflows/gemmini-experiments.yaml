@@ -34,3 +34,10 @@ jobs:
         with:
           name: results.pkl
           path: accfg_artifacts/results.pkl
+      - name: Run postprocessing
+        run: python3 plot_gemmini.py -i results.pkl -o gemmini_barplot.png
+        working-directory: accfg_artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gemmini_barplot.png
+          path: accfg_artifacts/gemmini_barplot.png
