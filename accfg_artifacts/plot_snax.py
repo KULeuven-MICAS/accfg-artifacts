@@ -23,11 +23,11 @@ def change_option_labels(data):
 def bar_plot_data(data, colors, filename, roofline=False, write=False):
 
     print(data)
-    data_simple = data.query('option == "Base (MLIR)" or option == "With Optimizations"')
-    data = data_simple
+    data = data.query('option == "Base (MLIR)" or option == "With Optimizations"')
+    data['option'] = data['option'].cat.remove_unused_categories()
     baseline = dict((row['size'], row['p_meas']) for i,row in data.query("option == 'Base (MLIR)'").iterrows())
 
-    ax = sns.barplot(data_simple, x="size", y="p_meas", hue="option")
+    ax = sns.barplot(data, x="size", y="p_meas", hue="option")
     ax.set_ylabel('$P_{measured}$ (ops/cycle)')
     ax.set_xlabel('Square Matrix Multiplication Size')
     ax.set_xlim(-0.5,5.5)
@@ -35,10 +35,10 @@ def bar_plot_data(data, colors, filename, roofline=False, write=False):
     key_order = ["Base (MLIR)", "With Optimizations"]
 
     # Add little 'x' markers on top of the bars for P_attain
-    for i, row in data_simple.iterrows():
+    for i, row in data.iterrows():
         kind = key_order.index(row["option"])
         # Get the x position for the marker
-        x = ax.get_xticks()[list(data_simple["size"].unique()).index(row["size"])] + (
+        x = ax.get_xticks()[list(data["size"].unique()).index(row["size"])] + (
             (kind - (len(key_order)/2)) * 0.2
         ) + 0.05 # adjust based on hue offset
         # Plot the 'x' marker
@@ -53,7 +53,7 @@ def bar_plot_data(data, colors, filename, roofline=False, write=False):
 
     # plot the P_max_attain
     x_vals = ax.get_xticks()
-    y_vals = list(data_simple.query("option == 'With Optimizations'")['p_attain_conc'])
+    y_vals = list(data.query("option == 'With Optimizations'")['p_attain_conc'])
 
     #ax.plot(
     #    [x_vals[i//2] + ((-1)**(i%2+1)*0.4) for i in range(2*len(x_vals))],
