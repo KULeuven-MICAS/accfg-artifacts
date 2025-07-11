@@ -57,7 +57,7 @@ This repository can run all experiments for OpenGeMM.
 ```sh 
 docker run --rm -itv $PWD:/repo:z ghcr.io/kuleuven-micas/accfg-artifacts:latest 
 ```
-**Explanation:**: Get (if not downloaded yet) the docker image and start the docker container.
+**Explanation:** Get (if not downloaded yet) the docker image and start the docker container.
 Mount the repository in the docker container. All experiments need to be run inside the docker container.
 The docker contains all required simulators, compilers to compile the binaries to run on the container.
 
@@ -108,7 +108,7 @@ This repository can run all experiments for Gemmini
 docker run --rm -itv $PWD:/repo:z ghcr.io/kuleuven-micas/accfg-artifacts:latest
 ```
 
-**Explanation:**: Get (if not downloaded yet) the docker image and start the docker container.
+**Explanation:** Get (if not downloaded yet) the docker image and start the docker container.
 Mount the repository in the docker container. All experiments need to be run inside the docker container.
 The docker contains all required simulators, compilers to compile the binaries to run on the container.
 
