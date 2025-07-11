@@ -23,6 +23,12 @@ If you already cloned the repository, but forgot the `--recursive` flag, do:
 git submodule update --init --recursive --remote
 ```
 
+## Running all experiments:
+
+Use the `run-all.sh` script to run all experiments: `docker run --rm -itv $PWD:/repo:z ghcr.io/kuleuven-micas/accfg-artifacts:latest /repo/run-all.sh`
+
+Or, run individual experiments like so:
+
 ## SNAX experiments
 
 This repository can run all experiments for SNAX.
@@ -30,9 +36,9 @@ This repository can run all experiments for SNAX.
 `cd` into `accfg-artifacts` and then:
 
 ```sh 
-docker run -itv $PWD:/repo:z ghcr.io/kuleuven-micas/snax:v0.1.6
+docker run --rm -itv $PWD:/repo:z ghcr.io/kuleuven-micas/accfg-artifacts:latest
 # inside the repository
-pip install -e . -e /repo/snax-mlir
+pip install /repo -e /repo/snax-mlir
 cd /repo/snax-mlir/kernels/streamer_matmul
 python3 genbenchmark.py
 cd /repo/accfg-artifacts
@@ -50,15 +56,13 @@ This repository can run all experiments for Gemmini
 `cd` into `accfg-artifacts` and then:
 
 ```sh
-docker run -itv $PWD:/repo:z ghcr.io/kuleuven-micas/gemmini-test:latest
+docker run --rm -itv $PWD:/repo:z ghcr.io/kuleuven-micas/accfg-artifacts:latest
 # Prepare folder structure and object files by building all tests
-cd gemmini-rocc-tests && ./build.sh
-# Run and build all tiled matmul tests (GCC)
-cd gemmini-rocc-tests/build && make test-baremetal-bareMetalC
+cd /repo/gemmini-rocc-tests && ./build.sh
 # name: build tiled matmul tests (MLIR and MLIR optimized)
-cd gemmini-rocc-tests/bareMetalMLIR && make all_binaries all_binaries_no_opt
+cd /repo/gemmini-rocc-tests/bareMetalMLIR && make all_binaries all_binaries_no_opt
 # Install postprocessing requirements
-pip install -e . --break-system-packages
+cd /repo && pip install . --break-system-packages
 # Run postprocessing and number gathering
-cd accfg_artifacts && python3 gemmini_get_all_numbers.py ../gemmini-rocc-tests -o results.pkl
+python3 accfg_artifacts/gemmini_get_all_numbers.py gemmini-rocc-tests -o /repo/artifacts/gemmini_results.pkl
 ```
