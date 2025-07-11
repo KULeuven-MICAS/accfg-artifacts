@@ -155,7 +155,8 @@ The `artifacts` folder in the repository should contain two pickled pandas DataF
 
 The figures should be identical (excpet for minor formatting changes) to the ones reported in the paper.
 
-The DataFrames are printed during benchmarking, and their contents are epxlained below:
+The DataFrames are printed during benchmarking, and their contents are epxlained below. Looking into the plotting scripts
+inside the `accfg_artifacts` folder will provide helpful snippets for digging into the data if one is inclided to do so themselves.
 
 ### OpenGEMM:
 
