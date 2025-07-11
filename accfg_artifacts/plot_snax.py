@@ -16,45 +16,96 @@ def change_option_labels(data):
         * ACCFG_BOTH   -> All
     """
     data = data.sort_values(["option", "size"])
-    category_map = {'NO_ACCFG_OPT': 'Base', 'OVERLAP_ONLY': 'Overlapped', 'DEDUP_ONLY': 'Deduplicated', 'ACCFG_BOTH': 'All'}
+    category_map = {'NO_ACCFG_OPT': 'Base (MLIR)', 'OVERLAP_ONLY': 'Overlapped', 'DEDUP_ONLY': 'Deduplicated', 'ACCFG_BOTH': 'With Optimizations'}
     data['option'] = data['option'].cat.rename_categories(category_map)
     return data 
 
 def bar_plot_data(data, colors, filename, roofline=False, write=False):
 
+    print(data)
+    data_simple = data.query('option == "Base (MLIR)" or option == "With Optimizations"')
+    data = data_simple
+    baseline = dict((row['size'], row['p_meas']) for i,row in data.query("option == 'Base (MLIR)'").iterrows())
 
-    baseline = dict((row['size'], row['p_meas']) for _,row in data.query("option == 'Base'").iterrows())
-    ax = sns.barplot(data, x="size", y="p_meas", hue="option")
+    ax = sns.barplot(data_simple, x="size", y="p_meas", hue="option")
     ax.set_ylabel('$P_{measured}$ (ops/cycle)')
     ax.set_xlabel('Square Matrix Multiplication Size')
     ax.set_xlim(-0.5,5.5)
 
-    key_order = ["Base", "Deduplicated", "Overlapped", "All"]
+    key_order = ["Base (MLIR)", "With Optimizations"]
 
     # Add little 'x' markers on top of the bars for P_attain
-    for _, row in data.iterrows():
+    for i, row in data_simple.iterrows():
         kind = key_order.index(row["option"])
         # Get the x position for the marker
-        x = ax.get_xticks()[list(data["size"].unique()).index(row["size"])] + (
+        x = ax.get_xticks()[list(data_simple["size"].unique()).index(row["size"])] + (
             (kind - (len(key_order)/2)) * 0.2
         ) + 0.05 # adjust based on hue offset
         # Plot the 'x' marker
         if kind != 0:
             rel_perf = row['p_meas'] / baseline[row["size"]]
             ax.text(
-                x, row['p_meas'] + 10, f"×{rel_perf:.2f}", 
-                size=7,
+                x, row['p_meas'] + 10, f"×{rel_perf:.2f}",
+                size=10            ,
                 #color = "red" if rel_perf < 1 else None,
-                rotation=90,
+                rotation=0,
             )
 
-    if roofline:
-        ax.plot([-.5,5.5],[1024,1024], linestyle='--', linewidth=.8, color=colors[-1], label="Roofline (512 ops/cycle)")
+    # plot the P_max_attain
+    x_vals = ax.get_xticks()
+    y_vals = list(data_simple.query("option == 'With Optimizations'")['p_attain_conc'])
+
+    #ax.plot(
+    #    [x_vals[i//2] + ((-1)**(i%2+1)*0.4) for i in range(2*len(x_vals))],
+    #    [y_vals[i//2] for i in range(2*len(y_vals))],
+    #    "r--",
+    #    label="Max Attainable Perf",
+    #    linewidth=0.8,
+    #)
+
+
+    #ax.plot([-.5,4.5],[512,512], linestyle='--', linewidth=.8, color=colors[-1], label="Roofline (512 ops/cycle)")
+
 
     # Adding legend for the x markers
-    plt.legend(loc="lower right")
+    #plt.legend(loc="lower right")
+    plt.title("Measured Performance on SNAX, with relative improvement")
     ax.yaxis.set_major_locator(MultipleLocator(128))
     ax.yaxis.set_minor_locator(MultipleLocator(32))
+
+    #baseline = dict((row['size'], row['p_meas']) for _,row in data.query("option == 'Base (MLIR)'").iterrows())
+    #ax = sns.barplot(data, x="size", y="p_meas", hue="option")
+    #ax.set_ylabel('$P_{measured}$ (ops/cycle)')
+    #ax.set_xlabel('Square Matrix Multiplication Size')
+    #ax.set_xlim(-0.5,5.5)
+
+    ##key_order = ["Base", "Deduplicated", "Overlapped", "All"]
+    #key_order = ["Base (MLIR)", "Deduplicated", "Overlapped", "With Optimizations"]
+
+    ## Add little 'x' markers on top of the bars for P_attain
+    #for _, row in data.iterrows():
+    #    kind = key_order.index(row["option"])
+    #    # Get the x position for the marker
+    #    x = ax.get_xticks()[list(data["size"].unique()).index(row["size"])] + (
+    #        (kind - (len(key_order)/2)) * 0.2
+    #    ) + 0.05 # adjust based on hue offset
+    #    # Plot the 'x' marker
+    #    if kind != 0:
+    #        rel_perf = row['p_meas'] / baseline[row["size"]]
+    #        ax.text(
+    #            x, row['p_meas'] + 10, f"×{rel_perf:.2f}", 
+    #            size=7,
+    #            #color = "red" if rel_perf < 1 else None,
+    #            rotation=90,
+    #        )
+
+    #if roofline:
+    #    ax.plot([-.5,5.5],[1024,1024], linestyle='--', linewidth=.8, color=colors[-1], label="Roofline (512 ops/cycle)")
+
+    ## Adding legend for the x markers
+    #plt.legend(loc="lower right")
+    #ax.yaxis.set_major_locator(MultipleLocator(128))
+    #ax.yaxis.set_minor_locator(MultipleLocator(32))
     if write:
         plt.savefig(filename,bbox_inches='tight')
     else:
@@ -113,6 +164,9 @@ def roofline_plot_data(data, filename, colors, bw_conf=2, p_peak=1024, write=Fal
 
     ## Adding the Name legend separately
     ax.add_artist(size_legend)
+    print(name_handles)
+    print("help")
+    print(name_handles)
     ax.legend(name_handles, name_labels, title="Optimization", loc='upper center', fontsize=legend_fontsize, columnspacing=legend_columnspacing,
               bbox_to_anchor=(0.7, -0.25), ncol=2, fancybox=True, shadow=False)
 
