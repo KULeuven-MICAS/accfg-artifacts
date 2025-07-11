@@ -3,7 +3,9 @@ import argparse
 
 def process_data(data):
     data["ops"] = data["size"]**3*2
-    data["ops"] = data["size"]**3*2
+    data["bw_conf_eff"] = 16*data["rocc"]/(data["cycles"]*3)
+    data["Ioc"] = data["ops"]/(data["rocc"]*16)
+    data["p_attain_seq"] =  1 / ((1/512) + (1/(data["Ioc"]*data["bw_conf_eff"])))
     print(data)
     return data
 
