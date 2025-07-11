@@ -2,8 +2,8 @@
 
 ## Claims:
 
-1. Performance on OpenGEMM is improved by 2x geomean, and up to 2.71x for some sizes through our optimizations.
-2. Performance on Gemmini is improved by 11% geoman.
+1. Performance on OpenGEMM is improved by 1.99x geomean, and up to 2.71x for some sizes through our optimizations.
+2. Performance on Gemmini is improved by 10.5% geoman.
 3. Figures 10, 11 and 12 in the paper can be reproduced.
 
 ## Installation and requirements
@@ -159,44 +159,44 @@ python3 plot_gemmini.py -i /repo/artifacts/gemmini_results.pkl -o /repo/artifact
 
 The `artifacts` folder in the repository should contain two pickled pandas DataFrames, and three figures (10, 11 ad 12).
 
-The figures should be identical (excpet for minor formatting changes) to the ones reported in the paper.
+Running `python3 /repo/accfg_artifacts/show_results.py -i /repo/artifacts/` will print all the data again, and calculate geomean speedup to verify claims 1 and 2.
 
-The DataFrames are printed during benchmarking, and their contents are epxlained below. Looking into the plotting scripts
-inside the `accfg_artifacts` folder will provide helpful snippets for digging into the data if one is inclided to do so themselves.
+The figures produced should be identical (excpet for minor formatting changes) to the ones printed in the paper, allowing the verification of claim 3.
 
 ### OpenGEMM:
 
 For OpenGEMM, the following table will be printed out:
 
 ```
-    size              option   csrw  ...  p_attain_conc  p_attain_opt      p_meas
-4     16         Base (MLIR)     40  ...      78.019048     72.495575   48.473373
-8     32         Base (MLIR)    160  ...     156.038095    135.404959  107.789474
-0     64         Base (MLIR)    640  ...     312.076190    239.182482  199.804878
-20   128         Base (MLIR)   2560  ...     624.152381    387.786982  338.796769
-12   256         Base (MLIR)  12288  ...    1024.000000    531.732252  510.784144
-16   512         Base (MLIR)  49152  ...    1024.000000    699.983979  682.194771
-5     16        Deduplicated     19  ...     167.397190    143.877058   97.523810
-9     32        Deduplicated     55  ...     469.161521    321.747775  261.099602
-1     64        Deduplicated    199  ...    1024.000000    516.698984  461.521127
-21   128        Deduplicated    775  ...    1024.000000    693.194616  619.817349
-13   256        Deduplicated   3081  ...    1024.000000    827.808266  777.028738
-17   512        Deduplicated  12297  ...    1024.000000    915.717975  884.763433
-6     16          Overlapped     60  ...      53.065587     53.065587   36.408889
-10    32          Overlapped    200  ...     126.334458    126.334458   97.669151
-2     64          Overlapped    720  ...     279.247936    279.247936  222.911565
-22   128          Overlapped   2720  ...     589.501616    589.501616  479.842581
-14   256          Overlapped  12672  ...    1024.000000   1024.000000  818.600439
-18   512          Overlapped  49920  ...    1024.000000   1024.000000  916.546728
-7     16  With Optimizations     25  ...     134.432821    134.432821   90.021978
-11    32  With Optimizations     67  ...     400.372661    400.372661  292.571429
-3     64  With Optimizations    223  ...     952.060833    952.060833  541.619835
-23   128  With Optimizations    823  ...    1024.000000   1024.000000  694.881378
-15   256  With Optimizations   3177  ...    1024.000000   1024.000000  834.770425
-19   512  With Optimizations  12489  ...    1024.000000   1024.000000  921.502276
+OpenGemm Data:
+    size              option   csrw  csrwi  cycles        ops  ...  setup ins          Ioc  p_attain_seq  p_attain_conc  p_attain_opt      p_meas
+8     16         Base (MLIR)     40     80     169       8192  ...        120    39.009524     72.495575      78.019048     72.495575   48.473373
+12    32         Base (MLIR)    160    320     608      65536  ...        480    78.019048    135.404959     156.038095    135.404959  107.789474
+20    64         Base (MLIR)    640   1280    2624     524288  ...       1920   156.038095    239.182482     312.076190    239.182482  199.804878
+0    128         Base (MLIR)   2560   5120   12380    4194304  ...       7680   312.076190    387.786982     624.152381    387.786982  338.796769
+4    256         Base (MLIR)  12288  18432   65692   33554432  ...      30720   553.046414    531.732252    1024.000000    531.732252  510.784144
+16   512         Base (MLIR)  49152  73728  393488  268435456  ...     122880  1106.092827    699.983979    1024.000000    699.983979  682.194771
+9     16        Deduplicated     19     35      84       8192  ...         54    83.698595    143.877058     167.397190    143.877058   97.523810
+13    32        Deduplicated     55     95     251      65536  ...        150   234.580761    321.747775     469.161521    321.747775  261.099602
+21    64        Deduplicated    199    335    1136     524288  ...        534   521.485018    516.698984    1024.000000    516.698984  461.521127
+1    128        Deduplicated    775   1295    6767    4194304  ...       2070  1072.883517    693.194616    1024.000000    693.194616  619.817349
+5    256        Deduplicated   3081   5133   43183   33554432  ...       8214  2160.324618    827.808266    1024.000000    827.808266  777.028738
+17   512        Deduplicated  12297  20493  303398  268435456  ...      32790  4329.874746    915.717975    1024.000000    915.717975  884.763433
+10    16          Overlapped     60    110     225       8192  ...        170    26.532794     50.451116      53.065587     53.065587   36.408889
+14    32          Overlapped    200    380     671      65536  ...        580    63.167229    112.459888     126.334458    126.334458   97.669151
+22    64          Overlapped    720   1400    2352     524288  ...       2120   139.623968    219.413266     279.247936    279.247936  222.911565
+2    128          Overlapped   2720   5360    8741    4194304  ...       8080   294.750808    374.123985     589.501616    589.501616  479.842581
+6    256          Overlapped  12672  18848   40990   33554432  ...      31520   537.145931    524.271617    1024.000000   1024.000000  818.600439
+18   512          Overlapped  49920  74560  292877  268435456  ...     124480  1089.960435    696.721006    1024.000000   1024.000000  916.546728
+11    16  With Optimizations     25     35      91       8192  ...         60    67.216410    118.832276     134.432821    134.432821   90.021978
+15    32  With Optimizations     67     95     224      65536  ...        162   200.186331    287.833105     400.372661    400.372661  292.571429
+23    64  With Optimizations    223    335     968     524288  ...        558   476.030417    493.360466     952.060833    952.060833  541.619835
+3    128  With Optimizations    823   1295    6036    4194304  ...       2118  1022.658011    682.368186    1024.000000   1024.000000  694.881378
+7    256  With Optimizations   3177   5133   40196   33554432  ...       8310  2108.203599    823.905626    1024.000000   1024.000000  834.770425
+19   512  With Optimizations  12489  20493  291302  268435456  ...      32982  4276.893146    914.520005    1024.000000   1024.000000  921.502276
 ```
 
-Here we measure the `csrw` instructions which write configuration to OpenGemm, together with cycle counts for the kernel (not shown in this print, but can be found inside the DataFrame when inspecting).
+Here we measure the various `csr` instructions which write configuration to OpenGemm, together with cycle counts for the kernel (not shown in this print, but can be found inside the DataFrame when inspecting). From these we calculate the final measured attained performance `P_meas`.
 
 ### Gemmini:
 
