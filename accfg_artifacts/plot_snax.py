@@ -112,12 +112,16 @@ def bar_plot_data(data, colors, filename, roofline=False, write=False):
         plt.show()
 
 def roofline_plot_data(data, filename, colors, bw_conf=2, p_peak=1024, write=False):
-    xlim = [15, 5000]
-    ylim = [30,1300]
+    xlim = [100, 5000]
+    ylim = [140,1300]
 
+
+    #data = data.query('option == "Base (MLIR)" or option == "With Optimizations"')
+    data = data.query('64 <= size <= 256')
+    #data['option'] = data['option'].cat.remove_unused_categories()
 
     palette = dict(
-        zip((16, 32, 64, 128, 256, 512), colors)
+        zip((64, 128, 256), colors)
     )
     # Create scatter plot
     plt.rcParams.update({
@@ -150,17 +154,17 @@ def roofline_plot_data(data, filename, colors, bw_conf=2, p_peak=1024, write=Fal
     handles, labels = ax.get_legend_handles_labels()
 
     ## Split handles and labels based on your data (Size vs. Name)
-    size_handles = handles[1:7]   # Assuming first 6 are sizes (adjust this based on actual output)
-    size_labels = labels[1:7]
-    name_handles = handles[8:12]   # Assuming rest are names (adjust accordingly)
-    name_labels = labels[8:12]
+    size_handles = handles[1:4]   # Assuming first 6 are sizes (adjust this based on actual output)
+    size_labels = labels[1:4]
+    name_handles = handles[5:9]   # Assuming rest are names (adjust accordingly)
+    name_labels = labels[5:9]
 
     legend_fontsize=8
     legend_columnspacing=0.5
 
     ## Adding the Size legend
     size_legend = ax.legend(size_handles, size_labels, title="Square Matrix Multiplication Size", loc='upper center',fontsize=legend_fontsize, columnspacing=legend_columnspacing,
-                            bbox_to_anchor=(0.1, -0.25), ncol=3, fancybox=True, shadow=False)
+                            bbox_to_anchor=(0.1, -0.25), ncol=2, fancybox=True, shadow=False)
 
     ## Adding the Name legend separately
     ax.add_artist(size_legend)
@@ -235,7 +239,7 @@ def main():
         write = True
 
     custom_params = {"axes.spines.right": False, "axes.spines.top": False, 'figure.figsize':(6,3), "ytick.left" : True, "figure.dpi":300, **rc_fonts}
-    colors = tuple((r/256,g/256,b/256) for (r,g,b) in [(51,117,56),(93,168,153),(148,203,236),(220,205,125),(194,106,119),(159,74,150),(126,41,84)])
+    colors = tuple((r/256,g/256,b/256) for (r,g,b) in [(0x1f,0x78,0xb4),(0x33,0xa0,0x2c),(0xa6,0xce,0xe3),(0xb2,0xdf,0x8a),(194,106,119),(159,74,150),(126,41,84)])
     sns.set_theme(style="ticks", palette=colors, rc=custom_params)
     data = change_option_labels(all_data)
     if args.plot == "bar_plot":
