@@ -79,7 +79,6 @@ def main():
     dataframe = get_spike_data(args.directory) 
     if dataframe.empty:
         raise RuntimeError("No results were found")
-    print(dataframe)
     if args.output_path is not None:
         dataframe.to_pickle(args.output_path)
 
