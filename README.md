@@ -20,7 +20,12 @@ These requirements should be plenty:
 * A working internet connection (to download the docker container, this repository, and additional python packages)
 * 16 GB of free disk space
 
-All time estimations are based on such typical machines.
+
+**Note on time:** On modern Desktop CPUs we saw times at around ~30 minutes to complete the entire evaluation, but 
+lower-power CPUs seem to struggle a lot with these simulation workloads.
+
+All time estimations are based on typical student machines, where there is access to a fast workstation, times can
+be expected to be significantly lower.
 
 ### Getting the source (~ <1 minute)
 
@@ -44,8 +49,6 @@ git submodule update --init --recursive --remote
 After cloning the repository with all submodules, `cd` into it, and run the `./run-all.sh` script. This will spawn the docker container automatically and run itself within it. 
 You can alternatively start the docker container manually using: `docker run --rm -itv $PWD:/repo:z ghcr.io/kuleuven-micas/accfg-artifacts:latest /repo/run-all.sh`
 The docker image itself is about ~9 GB.
-
-**Note on time:** On modern Desktop CPUs we saw times at around ~30 minutes, but lower-power CPUs seem to struggle a lot with these simulation workloads.
 
 ## Or, run individual experiments:
 
