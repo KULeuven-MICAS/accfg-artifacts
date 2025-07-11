@@ -18,9 +18,12 @@ python3 plot_snax.py -i /repo/artifacts/opengemm_results.pkl --plot=roofline -o 
 
 # Gemmini Experiments:
 cd /repo/gemmini-rocc-tests && ./build.sh
-cd /repo/gemmini-rocc-tests/bareMetalMLIR && make all_binaries_opt all_binaries_no_opt
+cd /repo/gemmini-rocc-tests/bareMetalMLIR && make all_binaries_opt
 #cd /repo && pip install . --break-system-packages
 cd /repo
 python3 accfg_artifacts/gemmini_get_all_numbers.py gemmini-rocc-tests -o /repo/artifacts/gemmini_results.pkl
 cd /repo/accfg_artifacts
 python3 plot_gemmini.py -i /repo/artifacts/gemmini_results.pkl -o /repo/artifacts/fig10_bar_plot.png
+
+# Show final results:
+python3 /repo/accfg_artifacts/show_results.py -i /repo/artifacts/
