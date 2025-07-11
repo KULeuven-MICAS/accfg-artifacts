@@ -6,8 +6,23 @@ if ! mountpoint /repo; then
 	exit 0
 fi
 
+# create final artifact output folder
+mkdir -p /repo/artifacts
+
+# OpenGEMM Experiments:
+pip install /repo /repo/snax-mlir --break-system-packages
+cd /repo/snax-mlir/kernels/streamer_matmul
+python3 genbenchmark.py
+cd /repo/accfg-artifacts
+python3 get_all_numbers.py -i /repo/snax-mlir/kernels/streamer_matmul/results -o /repo/artifacts/opengemm_results.pkl
+python3 plot_snax.py -i /repo/artifacts/opengemm_results.pkl --plot=bar_plot -o /repo/artifacts/fig_11_bar_plot.png
+python3 plot_snax.py -i /repo/artifacts/opengemm_results.pkl --plot=roofline -o /repo/artifacts/fig_12_roofline.png
+
+
+# Gemmini Experiments:
 cd /repo/gemmini-rocc-tests && ./build.sh
 cd /repo/gemmini-rocc-tests/bareMetalMLIR && make all_binaries all_binaries_no_opt
-cd /repo && pip install . --break-system-packages
-python3 accfg_artifacts/gemmini_get_all_numbers.py gemmini-rocc-tests -o results.pkl
+#cd /repo && pip install . --break-system-packages
+cd /repo
+python3 accfg_artifacts/gemmini_get_all_numbers.py gemmini-rocc-tests -o /repo/artifacts/gemmini_results.pkl
 
