@@ -16,7 +16,7 @@ def get_spike_data(input_folder):
         elif option == "MLIR":
             binary = '{}/bareMetalMLIR/tiled_matmul_{}x{}.no_opt.acc_dialect.x'.format(input_folder, size, size)
         elif option == "MLIR deduplicated":
-            binary = '{}/bareMetalMLIR/tiled_matmul_{}x{}.acc_dialect.x'.format(input_folder, size, size)
+            binary = '{}/bareMetalMLIR/tiled_matmul_{}x{}.opt.acc_dialect.x'.format(input_folder, size, size)
         command = [ 'spike', '-l', '--extension=gemmini', binary]
 
         """
