@@ -10,7 +10,7 @@ fi
 mkdir -p /repo/artifacts
 
 # OpenGEMM Experiments:
-pip install /repo /repo/snax-mlir --break-system-packages
+pip install /repo -e /repo/snax-mlir --break-system-packages
 cd /repo/snax-mlir/kernels/streamer_matmul
 python3 genbenchmark.py
 cd /repo/accfg-artifacts
