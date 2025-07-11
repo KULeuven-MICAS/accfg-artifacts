@@ -3,7 +3,7 @@
 ## Installation and requirements
 
 **Software Requirements:**
-* linux (to run docker)
+* linux (to run docker) or other linux-like environments (WSL), but these are untested.
 * git (to obtain the source code for the experiments)
 * docker (to run the experiments)
 
@@ -16,7 +16,7 @@ All software needs to be pulled from ghcr.io and pypi, machines with faster inte
 These requirements should be plenty:
 
 * 4-core x86 CPU
-* 16 GB RAM
+* 8 GB RAM
 * A working internet connection (to download the docker container, this repository, and additional python packages)
 * 16 GB of free disk space
 
@@ -44,6 +44,8 @@ git submodule update --init --recursive --remote
 After cloning the repository with all submodules, `cd` into it, and run the `./run-all.sh` script. This will spawn the docker container automatically and run itself within it. 
 You can alternatively start the docker container manually using: `docker run --rm -itv $PWD:/repo:z ghcr.io/kuleuven-micas/accfg-artifacts:latest /repo/run-all.sh`
 The docker image itself is about ~9 GB.
+
+**Note on time:** On modern Desktop CPUs we saw times at around ~30 minutes, but lower-power CPUs seem to struggle a lot with these simulation workloads.
 
 ## Or, run individual experiments:
 
@@ -82,7 +84,7 @@ cd /repo/accfg-artifacts
 # Perform post processing on the numbers themselves
 python3 get_all_numbers.py -i /repo/snax-mlir/kernels/streamer_matmul/results -o results.pkl
 ```
-**Explanation:** Gather performance data of all results and dump in a small pickle file
+**Explanation:** Gather performance data of all results and dump in a small pickle file (contains a pandas DataFrame)
 
 _~ <1 minute_
 
@@ -92,7 +94,7 @@ python3 plot_snax.py -i /repo/accfg_artifacts/results.pkl --plot=bar_plot -o bar
 python3 plot_snax.py -i /repo/accfg_artifacts/results.pkl --plot=roofline -o roofline.png
 ```
 
-**Explanation:** From the results in the pickle file, make plots.
+**Explanation:** From the results in the pickle file, make bar chart and roofline plot.
 
 _~ <1 minute_
 
