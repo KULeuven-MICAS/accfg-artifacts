@@ -17,7 +17,7 @@
 
 These experiments should run on any typical x86 computer.
 As all hardware testing is done in simulation, no special hardware is required.
-Some parts of those simulations/postprocessing are rather compute-intensive, and will run faster on a faster machine.
+Some parts of those simulations/post-processing are rather compute-intensive, and will run faster on a faster machine.
 All software needs to be pulled from ghcr.io and pypi, machines with faster internet connection will finish this faster.
 These requirements should be plenty:
 
@@ -36,7 +36,7 @@ student machine. If there is access to a fast workstation, times can be expected
 To run the experiments in this repository, please clone the repository
 
 This repository relies on submodules.
-Therefore, we recommmend cloning as follows:
+Therefore, we recommend cloning as follows:
 
 ```sh
 git clone --recursive https://github.com/KULeuven-MICAS/accfg-artifacts
@@ -93,7 +93,7 @@ pip install /repo -e /repo/snax-mlir
 cd /repo/snax-mlir/kernels/streamer_matmul
 python3 genbenchmark.py
 ```
-**Explanation:** Compile all binaries for the OpenGEMM system, and run them in a pre-compiled verilator simulation-binary.
+**Explanation:** Compile all binaries for the OpenGEMM system, and run them in a pre-compiled Verilator simulation-binary.
 
 *~ 15 minutes.*
 
@@ -170,7 +170,7 @@ The `artifacts` folder in the repository should contain two pickled pandas DataF
 
 Running `python3 /repo/accfg_artifacts/show_results.py -i /repo/artifacts/` will print all the data again, and calculate geomean speedup to verify claims 1 and 2.
 
-The figures produced should be identical (excpet for minor formatting changes) to the ones printed in the paper, allowing the verification of claim 3.
+The figures produced should be identical (except for minor formatting changes) to the ones printed in the paper, allowing the verification of claim 3.
 
 ### OpenGEMM:
 
