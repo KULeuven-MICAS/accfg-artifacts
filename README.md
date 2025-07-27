@@ -33,7 +33,9 @@ student machine. If there is access to a fast workstation, times can be expected
 
 ### Getting the source (~ <1 minute)
 
-To run the experiments in this repository, please clone the repository
+To run the experiments in this repository, please clone the repository or download the [Zenodo Artifact](https://doi.org/10.5281/zenodo.16260752).
+
+**Notes for Git:**
 
 This repository relies on submodules.
 Therefore, we recommend cloning as follows:
@@ -47,6 +49,13 @@ If you already cloned the repository, but forgot the `--recursive` flag, do:
 ```sh
 git submodule update --init --recursive --remote
 ```
+
+**Notes for Zenodo:**
+The Zenodo artifact comes in two parts, the docker container `accfg-artifacts.container.tar.gz` and the repository `accfg-artifacts.repo.tar.gz`.
+
+The repository can be extracted by running `tar -xzf accfg-artifacts.repo.tar.gz`.
+
+The `container` file needs to be imported using docker/podman by running `docker image load accfg-artifacts.container.tar.gz`.
 
 ### Basic Test:
 
