@@ -56,13 +56,14 @@ Navigate to the Zenodo artifact page (https://doi.org/10.5281/zenodo.16260752). 
 
 After downloading, the repository can be extracted by running `tar -xzf accfg-artifacts.repo.tar.gz`.
 
-The `container` file needs to be imported using docker/podman by running `docker image load accfg-artifacts.container.tar.gz`.
+The `container` file needs to be imported using docker/podman by running `docker image load -i accfg-artifacts.container.tar.gz`.
 
 ### Basic Test:
 
-A basic test to see if everything is working (next to just running `run-all.sh` and see if it crashes), is to run the simple `hello-world.sh` inside the docker container:
+A basic test to see if everything is working (next to just running `run-all.sh` and see if it crashes), can be performed by `cd`-ing into the repository and running the supplied `hello-world.sh` script inside the provided docker container:
 
 ```bash
+cd accfg-artifacts/  # cd into the cloned/downloaded repo folder
 docker run --rm -itv $PWD:/repo:z ghcr.io/kuleuven-micas/accfg-artifacts:latest /repo/hello-world.sh
 ```
 
@@ -71,7 +72,7 @@ This should install all dependencies and check that all binaries are found and w
 
 ## (RECOMMENDED) Running all experiments at once (~ 2 hours):
 
-After cloning the repository with all submodules, `cd` into it, and run the `./run-all.sh` script. This will spawn the docker container automatically and run itself within it. 
+After cloning/downloading the repository with all submodules, `cd` into it, and run the `./run-all.sh` script. This will spawn the docker container automatically and run itself within it. 
 You can alternatively start the docker container manually using: `docker run --rm -itv $PWD:/repo:z ghcr.io/kuleuven-micas/accfg-artifacts:latest /repo/run-all.sh`
 The docker image itself is about ~9 GB.
 
